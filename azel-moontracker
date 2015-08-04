@@ -1,0 +1,72 @@
+#!/bin/bash
+##
+## A simple shellscript that helps to track 
+## the Moon for EME Hamradio purposes.
+##
+## azel-moontracker is a simple shellscript that
+## reads the azel.dat file written by WSJT or
+## other compatible programs.
+##
+## It then uses rotctl as provided by hamlib to
+## automatically track the Moon with your antennas
+## for EME - Earth-Moon-Earth contacts.
+##
+## Of course you still need a capable EME Hamradio
+## setup with radios, antennas, amplifiers and (!!)
+## a hamlib compatible rotor/controller combination.
+##
+## Have fun and good DX!
+##
+
+##
+## Andreas Schreiner, OE4DNS
+## andreas.schreiner@sonnenmulde.at
+##
+## License: General Public License Version 3
+## See attached LICENSE file.
+##
+
+
+#################################################
+## Configure the script according to your setup ##
+
+## Serial Port used by the Rotor Controller
+#serialport="/dev/ttyUSB0"
+serialport="/dev/ttyUSB0"
+
+## Model of the Rotor Controller
+#rotormodel="603"
+rotormodel="603"
+
+## Baud Rate of the Rotor Serial Port
+#baudrate=9600
+baudrate=9600
+
+## Path to the tracking data file from wsjt
+## or other programs.
+#input="$HOME/.wsjt/azel.dat"
+input="$HOME/.wsjt/azel.dat"
+
+
+
+##########################################
+## Usually there is no need to change   ##
+## anything below this. Go ahead if you ##
+## know what you are doing.             ##
+##########################################
+OLDIFS=$IFS
+IFS=', '
+read -r f1 f2 f3 f4 < $input
+IFS=$OLDIFS
+
+
+## No negative elevation. If the moon is below
+## the horizon set elevation to zero.
+if [ 1 -eq "$(echo "${f3} < 0" | bc)" ]
+then  
+    f3=0
+fi
+
+## Issue rotor command
+echo "rotctl -m $rotormodel -r $serialport -s $baudrate P $f2,$f3"
+rotctl -m $rotormodel -r $serialport -s $baudrate P $f2,$f3"
