@@ -54,6 +54,10 @@ input="$HOME/.wsjt/azel.dat"
 ## anything below this. Go ahead if you ##
 ## know what you are doing.             ##
 ##########################################
+
+while :
+do
+
 OLDIFS=$IFS
 IFS=', '
 read -r f1 f2 f3 f4 < $input
@@ -69,4 +73,8 @@ fi
 
 ## Issue rotor command
 echo "rotctl -m $rotormodel -r $serialport -s $baudrate P $f2,$f3"
-rotctl -m $rotormodel -r $serialport -s $baudrate P $f2,$f3"
+rotctl -m $rotormodel -r $serialport -s $baudrate P $f2,$f3
+
+## Moon is slow, only move rotor once every 5 minutes.
+sleep 300
+done
