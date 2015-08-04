@@ -15,4 +15,10 @@ Of course you still need a capable EME Hamradio
 setup with radios, antennas, amplifiers and (!!)
 a hamlib compatible rotor/controller combination.
 
+
+To configure your setup you have to edit the
+azel-moontracker file. Just run it afterwards to
+start tracking.
+
+
 Have fun and good DX!
