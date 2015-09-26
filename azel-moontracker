@@ -11,7 +11,7 @@
 ## automatically track the Moon with your antennas
 ## for EME - Earth-Moon-Earth contacts.
 ##
-## Of course you still need a capable EME Hamradio
+## Of course you still need an EME Hamradio
 ## setup with radios, antennas, amplifiers and (!!)
 ## a hamlib compatible rotor/controller combination.
 ##
@@ -47,6 +47,22 @@ baudrate=9600
 #input="$HOME/.wsjt/azel.dat"
 input="$HOME/.wsjt/azel.dat"
 
+## Apply azimut and elevation corrections if
+## necessary. This allows to adjust for small
+## errors in antenna alignment.
+#azcorr=0
+#elcorr=0
+azcorr=0
+elcorr=-5
+
+## Maximum rotor elevation. Some rotors offer
+## 90°, some offer 180°.
+## Value is needed to check elevation
+## boundaries following alignment correction.
+#elmax=180
+elmax=180
+
+
 
 
 ##########################################
@@ -64,16 +80,49 @@ read -r f1 f2 f3 f4 < $input
 IFS=$OLDIFS
 
 
-## No negative elevation. If the moon is below
-## the horizon set elevation to zero.
-if [ 1 -eq "$(echo "${f3} < 0" | bc)" ]
+## Apply antenna alignment correction.
+## Calculate values using 'bc' and add leading
+## zeros if the result is < 1.
+f2=`echo "$f2 + $azcorr" | bc | sed 's/^\./0./'`
+f3=`echo "$f3 + $elcorr" | bc | sed 's/^\./0./'`
+
+## After correction the azimuth and elevation
+## boundaries (0-360 and 0-90 degrees) have
+## to be re-checked and adjusted if
+## necessary.
+
+## No azimuth < 0
+if [ 1 -eq "$(echo "${f2} < 0" | bc)" ]
 then  
-    f3=0
+  echo "smaller 0"
+  f2=`echo "360 + $f2" | bc | sed 's/^\./0./'`
 fi
 
+## No azimuth > 360
+if [ 1 -eq "$(echo "${f2} >= 360" | bc)" ]
+then  
+  echo "greater 360"
+  f2=`echo "$f2 - 360" | bc | sed 's/^\./0./'`
+fi
+
+## Never elevate < 0
+if [ 1 -eq "$(echo "${f3} < 0" | bc)" ]
+then  
+  f3=0
+fi
+
+## Never elevate to values greater than
+## the rotor offers
+if [ 1 -eq "$(echo "${f3} > $elmax" | bc)" ]
+then  
+  f3=$elmax
+fi
+
+
 ## Issue rotor command
-echo "rotctl -m $rotormodel -r $serialport -s $baudrate P $f2,$f3"
-rotctl -m $rotormodel -r $serialport -s $baudrate P $f2,$f3
+echo "rotctl -m $rotormodel -r $serialport -s $baudrate P $f2 $f3"
+#rotctl -m $rotormodel -r $serialport -s $baudrate P $f2 $f3
+echo ""
 
 ## Moon is slow, only move rotor once every 5 minutes.
 sleep 300
