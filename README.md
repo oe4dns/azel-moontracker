@@ -11,7 +11,7 @@ It then uses rotctl as provided by hamlib to
 automatically track the Moon with your antennas
 for EME - Earth-Moon-Earth contacts.
 
-Of course you still need a capable EME Hamradio
+Of course you still need an EME capable Hamradio
 setup with radios, antennas, amplifiers and (!!)
 a hamlib compatible rotor/controller combination.
 

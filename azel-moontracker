@@ -1,5 +1,12 @@
 #!/bin/bash
 ##
+## azel-moontracker 
+## Version 1.0
+##
+## For more information see:
+## https://github.com/oe4dns/azel-moontracker/
+##
+##
 ## A simple shellscript that helps to track 
 ## the Moon for EME Hamradio purposes.
 ##
@@ -11,7 +18,7 @@
 ## automatically track the Moon with your antennas
 ## for EME - Earth-Moon-Earth contacts.
 ##
-## Of course you still need an EME Hamradio
+## Of course you still need an EME capable Hamradio
 ## setup with radios, antennas, amplifiers and (!!)
 ## a hamlib compatible rotor/controller combination.
 ##
@@ -122,7 +129,6 @@ fi
 ## Issue rotor command
 echo "rotctl -m $rotormodel -r $serialport -s $baudrate P $f2 $f3"
 rotctl -m $rotormodel -r $serialport -s $baudrate P $f2 $f3
-echo ""
 
 ## Moon is slow, only move rotor once every 5 minutes.
 sleep 300
