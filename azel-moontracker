@@ -121,7 +121,7 @@ fi
 
 ## Issue rotor command
 echo "rotctl -m $rotormodel -r $serialport -s $baudrate P $f2 $f3"
-#rotctl -m $rotormodel -r $serialport -s $baudrate P $f2 $f3
+rotctl -m $rotormodel -r $serialport -s $baudrate P $f2 $f3
 echo ""
 
 ## Moon is slow, only move rotor once every 5 minutes.
